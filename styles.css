@@ -1456,6 +1456,14 @@ p {
   box-shadow: 0 30px 80px rgba(70, 16, 9, 0.15);
 }
 
+.card-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 1.5rem;
+  align-self: flex-start;
+}
+
 .card-badge {
   display: inline-block;
   padding: 5px 14px;
@@ -1466,9 +1474,7 @@ p {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.1em;
-  margin-top: 1.5rem;
   border: 1px solid var(--border);
-  align-self: flex-start;
   transition: all 0.2s;
 }
 
