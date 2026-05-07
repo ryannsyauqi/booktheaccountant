@@ -57,20 +57,36 @@ if (portfolioGrid) {
   let isExpanded = false;
 
   function updateGrid() {
-    const activeFilter = document.querySelector('.filter-btn.active').dataset.filter;
+    const activeCatBtn = document.querySelector('.filter-btn[data-group="cat"].active');
+    const activeStatusBtn = document.querySelector('.filter-btn[data-group="status"].active');
+    
+    const activeCat = activeCatBtn ? activeCatBtn.dataset.filter : 'all';
+    const activeStatus = activeStatusBtn ? activeStatusBtn.dataset.filter : 'all';
+
     const isMobile = window.innerWidth <= 768;
     const limit = isMobile ? 3 : 6;
 
-    // Filter cards
-    const filtered = allCards.filter(c => activeFilter === 'all' || c.dataset.cat === activeFilter);
+    // Filter cards by both Category AND Status
+    const filtered = allCards.filter(c => {
+      const catMatch = activeCat === 'all' || c.dataset.cat === activeCat;
+      const statusMatch = activeStatus === 'all' || c.dataset.status === activeStatus;
+      return catMatch && statusMatch;
+    });
     
     // Hide all first
-    allCards.forEach(c => c.style.display = 'none');
+    allCards.forEach(c => {
+      c.style.display = 'none';
+      c.classList.remove('in'); // Reset animation state for filtered items
+    });
 
     // Show limited or all
     const showCount = isExpanded ? filtered.length : limit;
     filtered.forEach((c, i) => {
-      if (i < showCount) c.style.display = 'flex';
+      if (i < showCount) {
+        c.style.display = 'flex';
+        // Re-trigger reveal animation slightly delayed
+        setTimeout(() => c.classList.add('in'), 10 * i);
+      }
     });
 
     // Toggle Button Visibility
@@ -84,8 +100,11 @@ if (portfolioGrid) {
   // Filter Click
   document.querySelectorAll('.filter-btn').forEach(btn => {
     btn.onclick = () => {
-      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      const group = btn.dataset.group;
+      // Only deactivate buttons in the same group
+      document.querySelectorAll(`.filter-btn[data-group="${group}"]`).forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      
       isExpanded = false; // Reset expansion on filter change
       updateGrid();
     };
